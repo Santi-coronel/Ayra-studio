@@ -1,4 +1,4 @@
-import { motion, useScroll, useSpring, useTransform, type Variants } from "motion/react";
+import { MotionConfig, motion, useReducedMotion, useScroll, useTransform } from "motion/react";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
   ArrowUp,
@@ -52,11 +52,6 @@ const NAV = [
 /*  Motion primitives                                                         */
 /* -------------------------------------------------------------------------- */
 
-const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 28 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.9, ease: [0.22, 1, 0.36, 1] } },
-};
-
 function Reveal({
   children,
   delay = 0,
@@ -66,20 +61,15 @@ function Reveal({
   delay?: number;
   className?: string;
 }) {
+  const reduceMotion = useReducedMotion();
+
   return (
     <motion.div
       className={className}
-      initial="hidden"
-      whileInView="show"
+      initial={reduceMotion ? false : { opacity: 0, y: 12 }}
+      whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-80px" }}
-      variants={{
-        hidden: { opacity: 0, y: 28 },
-        show: {
-          opacity: 1,
-          y: 0,
-          transition: { duration: 0.9, ease: [0.22, 1, 0.36, 1], delay },
-        },
-      }}
+      transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay }}
     >
       {children}
     </motion.div>
@@ -166,21 +156,6 @@ function GhostButton({ href, children }: { href: string; children: ReactNode }) 
       {children}
       <span className="transition-transform duration-500 group-hover:translate-x-1">→</span>
     </a>
-  );
-}
-
-/* -------------------------------------------------------------------------- */
-/*  Scroll progress bar                                                       */
-/* -------------------------------------------------------------------------- */
-
-function ScrollProgress() {
-  const { scrollYProgress } = useScroll();
-  const scaleX = useSpring(scrollYProgress, { stiffness: 120, damping: 30, mass: 0.3 });
-  return (
-    <motion.div
-      style={{ scaleX }}
-      className="fixed inset-x-0 top-0 z-[70] h-[2px] origin-left bg-primary/80"
-    />
   );
 }
 
@@ -314,14 +289,15 @@ function Navbar({ dark }: { dark: boolean }) {
 
 function Hero() {
   const ref = useRef<HTMLDivElement>(null);
+  const reduceMotion = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-  const y = useTransform(scrollYProgress, [0, 1], ["0%", "18%"]);
-  const scale = useTransform(scrollYProgress, [0, 1], [1, 1.08]);
-  const overlay = useTransform(scrollYProgress, [0, 1], [0.35, 0.7]);
+  const y = useTransform(scrollYProgress, [0, 1], ["0%", "6%"]);
+  const scale = useTransform(scrollYProgress, [0, 1], [1, 1.025]);
+  const overlay = useTransform(scrollYProgress, [0, 1], [0.35, 0.5]);
 
   return (
     <section id="top" ref={ref} className="relative h-[100svh] min-h-[640px] w-full overflow-hidden">
-      <motion.div style={{ y, scale }} className="absolute inset-0">
+      <motion.div style={reduceMotion ? undefined : { y, scale }} className="absolute inset-0">
         <img
           src={heroImg}
           alt="Interior de Ayra Pilates Studio con reformer y luz natural"
@@ -332,7 +308,7 @@ function Hero() {
         />
       </motion.div>
       <motion.div
-        style={{ opacity: overlay }}
+        style={reduceMotion ? { opacity: 0.35 } : { opacity: overlay }}
         className="absolute inset-0 bg-gradient-to-b from-black/25 via-black/25 to-black/70"
       />
       <div className="absolute inset-0 bg-gradient-to-r from-black/25 to-transparent" />
@@ -340,9 +316,9 @@ function Hero() {
       <div className="relative z-10 flex h-full items-end pb-8 sm:pb-12 md:items-center md:pb-0">
         <div className="container-ayra">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={reduceMotion ? false : { opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.7, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
             className="max-w-3xl"
           >
             <span className="inline-flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.32em] text-white/85">
@@ -352,9 +328,9 @@ function Hero() {
           </motion.div>
 
           <motion.h1
-            initial={{ opacity: 0, y: 30 }}
+            initial={reduceMotion ? false : { opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.1, delay: 0.45, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.75, delay: 0.18, ease: [0.22, 1, 0.36, 1] }}
             className="mt-4 max-w-3xl font-display text-[36px] leading-[1.05] tracking-tight text-white text-balance sm:mt-5 sm:max-w-[420px] sm:text-5xl md:text-[56px] lg:max-w-[440px] lg:text-[64px] xl:text-[68px]"
           >
             Descubrí una nueva forma de{" "}
@@ -362,18 +338,18 @@ function Hero() {
           </motion.h1>
 
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
+            initial={reduceMotion ? false : { opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 0.65, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.7, delay: 0.26, ease: [0.22, 1, 0.36, 1] }}
             className="mt-5 max-w-xl text-base leading-relaxed text-white/85 md:mt-6 md:text-lg"
           >
             Pilates contemporáneo en grupos reducidos con atención personalizada.
           </motion.p>
 
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={reduceMotion ? false : { opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 0.85, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.7, delay: 0.34, ease: [0.22, 1, 0.36, 1] }}
             className="mt-7 flex flex-col items-stretch gap-3 sm:mt-8 sm:flex-row sm:items-center"
           >
             <PrimaryButton href={WHATSAPP_URL} external className="w-full sm:w-auto">
@@ -409,18 +385,14 @@ function Marquee() {
   return (
     <section className="border-y border-border/60 bg-sand-soft">
       <div className="container-ayra flex items-center gap-3 overflow-hidden py-5">
-        <motion.ul
-          className="flex shrink-0 items-center gap-12 whitespace-nowrap text-sm text-foreground/70"
-          animate={{ x: ["0%", "-50%"] }}
-          transition={{ repeat: Infinity, duration: 35, ease: "linear" }}
-        >
-          {[...items, ...items, ...items].map((it, i) => (
-            <li key={i} className="flex items-center gap-3">
+        <ul className="flex shrink-0 items-center gap-12 whitespace-nowrap text-sm text-foreground/70">
+          {items.map((it) => (
+            <li key={it} className="flex items-center gap-3">
               <Sparkles className="h-3.5 w-3.5 text-primary" strokeWidth={1.5} />
               <span className="tracking-wide">{it}</span>
             </li>
           ))}
-        </motion.ul>
+        </ul>
       </div>
     </section>
   );
@@ -540,7 +512,7 @@ function About() {
                 height={1500}
                 loading="lazy"
                 className="aspect-[4/5] w-full rounded-2xl object-cover"
-                whileHover={{ scale: 1.02 }}
+                whileHover={{ scale: 1.01 }}
                 transition={{ duration: 0.6 }}
               />
             </Reveal>
@@ -552,7 +524,7 @@ function About() {
                 height={1500}
                 loading="lazy"
                 className="aspect-[3/4] w-full rounded-2xl object-cover"
-                whileHover={{ scale: 1.02 }}
+                whileHover={{ scale: 1.01 }}
                 transition={{ duration: 0.6 }}
               />
             </Reveal>
@@ -604,7 +576,7 @@ function WhyUs() {
           {reasons.map((r, i) => (
             <Reveal key={r.label} delay={i * 0.05}>
               <motion.div
-                whileHover={{ y: -4 }}
+                whileHover={{ y: -2 }}
                 transition={{ duration: 0.4 }}
                 className="group flex items-center gap-5 rounded-2xl border border-border/70 bg-card p-6 transition-colors hover:border-primary/40"
               >
@@ -677,7 +649,7 @@ function Services() {
           {services.map((s, i) => (
             <Reveal key={s.title} delay={i * 0.06}>
               <motion.article
-                whileHover={{ y: -6 }}
+                whileHover={{ y: -2 }}
                 transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
                 className="group relative flex h-full flex-col overflow-hidden rounded-3xl bg-card"
               >
@@ -687,7 +659,7 @@ function Services() {
                     alt={s.title}
                     loading="lazy"
                     className="h-full w-full object-cover"
-                    whileHover={{ scale: 1.06 }}
+                    whileHover={{ scale: 1.02 }}
                     transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
@@ -754,7 +726,7 @@ function Gallery() {
               className="mb-4 break-inside-avoid md:mb-6"
             >
               <motion.div
-                whileHover={{ scale: 1.02 }}
+                whileHover={{ scale: 1.01 }}
                 transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
                 className="overflow-hidden rounded-2xl"
               >
@@ -763,7 +735,7 @@ function Gallery() {
                   alt={img.alt}
                   loading="lazy"
                   className={
-                    "w-full object-cover transition-transform duration-[1600ms] hover:scale-105 " +
+                    "w-full object-cover transition-transform duration-700 hover:scale-[1.02] " +
                     (img.tall ? "aspect-[3/4]" : "aspect-[4/3]")
                   }
                 />
@@ -829,7 +801,7 @@ function Testimonials() {
               className={i === 0 ? "lg:row-span-2" : ""}
             >
               <motion.figure
-                whileHover={{ y: -4 }}
+                whileHover={{ y: -2 }}
                 transition={{ duration: 0.5 }}
                 className={
                   "flex h-full flex-col justify-between rounded-3xl border border-border/60 bg-card p-8 md:p-10 " +
@@ -1017,11 +989,9 @@ function CtaBanner() {
       <div className="container-ayra">
         <Reveal>
           <div className="relative overflow-hidden rounded-3xl bg-foreground px-8 py-16 text-center md:px-16 md:py-24">
-            <motion.div
+            <div
               aria-hidden
               className="pointer-events-none absolute inset-0 opacity-30"
-              animate={{ backgroundPosition: ["0% 0%", "100% 100%"] }}
-              transition={{ duration: 25, repeat: Infinity, repeatType: "reverse" }}
               style={{
                 backgroundImage:
                   "radial-gradient(circle at 20% 20%, color-mix(in oklab, var(--sage) 55%, transparent) 0%, transparent 55%), radial-gradient(circle at 80% 80%, color-mix(in oklab, var(--beige) 40%, transparent) 0%, transparent 60%)",
@@ -1160,6 +1130,7 @@ function FloatingActions({
   onToggleDark: () => void;
 }) {
   const [showTop, setShowTop] = useState(false);
+  const reduceMotion = useReducedMotion();
   useEffect(() => {
     const onScroll = () => setShowTop(window.scrollY > 700);
     onScroll();
@@ -1178,11 +1149,15 @@ function FloatingActions({
       </button>
 
       <motion.button
-        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+        onClick={() => window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" })}
         aria-label="Volver arriba"
         initial={false}
-        animate={{ opacity: showTop ? 1 : 0, y: showTop ? 0 : 20, pointerEvents: showTop ? "auto" : "none" }}
-        transition={{ duration: 0.4 }}
+        animate={{
+          opacity: showTop ? 1 : 0,
+          y: reduceMotion || showTop ? 0 : 10,
+          pointerEvents: showTop ? "auto" : "none",
+        }}
+        transition={{ duration: reduceMotion ? 0 : 0.3 }}
         className="flex h-11 w-11 items-center justify-center rounded-full border border-border/70 bg-background/80 text-foreground shadow-lg backdrop-blur"
       >
         <ArrowUp className="h-4 w-4" />
@@ -1193,54 +1168,16 @@ function FloatingActions({
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Escribir por WhatsApp"
-        initial={{ opacity: 0, y: 20 }}
+        initial={reduceMotion ? false : { opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1.2, duration: 0.6 }}
-        whileHover={{ scale: 1.05 }}
+        transition={{ delay: reduceMotion ? 0 : 0.45, duration: reduceMotion ? 0 : 0.45 }}
+        whileHover={reduceMotion ? undefined : { scale: 1.02 }}
         className="group relative flex items-center gap-3 overflow-hidden rounded-full bg-primary px-5 py-4 text-primary-foreground shadow-[0_15px_45px_-15px_color-mix(in_oklab,var(--sage-deep)_70%,transparent)]"
       >
-        <span className="absolute inset-0 animate-ping rounded-full bg-primary/40" />
         <MessageCircle className="relative h-5 w-5" strokeWidth={1.7} />
         <span className="relative hidden text-sm font-medium sm:inline">Escribinos</span>
       </motion.a>
     </div>
-  );
-}
-
-/* -------------------------------------------------------------------------- */
-/*  Loader                                                                    */
-/* -------------------------------------------------------------------------- */
-
-function InitialLoader() {
-  const [visible, setVisible] = useState(true);
-  useEffect(() => {
-    const t = setTimeout(() => setVisible(false), 900);
-    return () => clearTimeout(t);
-  }, []);
-  return (
-    <motion.div
-      initial={{ opacity: 1 }}
-      animate={{ opacity: visible ? 1 : 0 }}
-      transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-      style={{ pointerEvents: visible ? "auto" : "none" }}
-      className="fixed inset-0 z-[80] flex items-center justify-center bg-background"
-    >
-      <motion.div
-        initial={{ scale: 0.9, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ duration: 0.8 }}
-        className="flex flex-col items-center gap-4"
-      >
-        <motion.span
-          animate={{ rotate: 360 }}
-          transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
-          className="flex h-14 w-14 items-center justify-center rounded-full border border-foreground/20"
-        >
-          <Flower2 className="h-6 w-6 text-foreground" strokeWidth={1.4} />
-        </motion.span>
-        <span className="font-display text-lg tracking-tight text-foreground">Ayra Pilates</span>
-      </motion.div>
-    </motion.div>
   );
 }
 
@@ -1300,27 +1237,27 @@ function Index() {
   }, [dark]);
 
   return (
-    <div className="relative min-h-screen bg-background text-foreground">
-      <InitialLoader />
-      <ScrollProgress />
-      <Navbar dark={!dark} />
+    <MotionConfig reducedMotion="user">
+      <div className="relative min-h-screen bg-background text-foreground">
+        <Navbar dark={!dark} />
 
-      <main>
-        <Hero />
-        <Marquee />
-        <Benefits />
-        <About />
-        <WhyUs />
-        <Services />
-        <Gallery />
-        <Testimonials />
-        <Schedule />
-        <Location />
-        <CtaBanner />
-      </main>
+        <main>
+          <Hero />
+          <Marquee />
+          <Benefits />
+          <About />
+          <WhyUs />
+          <Services />
+          <Gallery />
+          <Testimonials />
+          <Schedule />
+          <Location />
+          <CtaBanner />
+        </main>
 
-      <Footer />
-      <FloatingActions dark={dark} onToggleDark={() => setDark((v) => !v)} />
-    </div>
+        <Footer />
+        <FloatingActions dark={dark} onToggleDark={() => setDark((v) => !v)} />
+      </div>
+    </MotionConfig>
   );
 }
