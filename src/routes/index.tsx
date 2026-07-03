@@ -327,7 +327,7 @@ function Hero() {
           alt="Interior de Ayra Pilates Studio con reformer y luz natural"
           width={1920}
           height={1280}
-          className="h-full w-full object-cover"
+          className="h-full w-full object-cover object-[12%_center] sm:object-[8%_center] md:object-left"
           fetchPriority="high"
         />
       </motion.div>
@@ -337,7 +337,7 @@ function Hero() {
       />
       <div className="absolute inset-0 bg-gradient-to-r from-black/25 to-transparent" />
 
-      <div className="relative z-10 flex h-full items-end pb-24 md:items-center md:pb-0">
+      <div className="relative z-10 flex h-full items-end pb-8 sm:pb-12 md:items-center md:pb-0">
         <div className="container-ayra">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -355,7 +355,7 @@ function Hero() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.1, delay: 0.45, ease: [0.22, 1, 0.36, 1] }}
-            className="mt-6 max-w-4xl font-display text-[42px] leading-[1.02] tracking-tight text-white text-balance sm:text-6xl md:text-7xl lg:text-[84px]"
+            className="mt-4 max-w-3xl font-display text-[36px] leading-[1.05] tracking-tight text-white text-balance sm:mt-5 sm:max-w-[420px] sm:text-5xl md:text-[56px] lg:max-w-[440px] lg:text-[64px] xl:text-[68px]"
           >
             Descubrí una nueva forma de{" "}
             <span className="italic text-white/90">conectar con tu cuerpo.</span>
@@ -365,7 +365,7 @@ function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.65, ease: [0.22, 1, 0.36, 1] }}
-            className="mt-7 max-w-xl text-base leading-relaxed text-white/85 md:text-lg"
+            className="mt-5 max-w-xl text-base leading-relaxed text-white/85 md:mt-6 md:text-lg"
           >
             Pilates contemporáneo en grupos reducidos con atención personalizada.
           </motion.p>
@@ -374,14 +374,14 @@ function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.85, ease: [0.22, 1, 0.36, 1] }}
-            className="mt-10 flex flex-wrap items-center gap-3"
+            className="mt-7 flex flex-col items-stretch gap-3 sm:mt-8 sm:flex-row sm:items-center"
           >
-            <PrimaryButton href={WHATSAPP_URL} external>
+            <PrimaryButton href={WHATSAPP_URL} external className="w-full sm:w-auto">
               Reservar una clase
             </PrimaryButton>
             <a
               href="#estudio"
-              className="group inline-flex items-center gap-2 rounded-full border border-white/40 bg-white/5 px-7 py-3.5 text-sm font-medium text-white backdrop-blur-md transition-colors hover:bg-white/15"
+              className="group inline-flex w-full items-center justify-center gap-2 rounded-full border border-white/40 bg-white/5 px-7 py-3.5 text-sm font-medium text-white backdrop-blur-md transition-colors hover:bg-white/15 sm:w-auto"
             >
               Conocer el estudio
               <span className="transition-transform duration-500 group-hover:translate-x-1">→</span>
@@ -390,20 +390,6 @@ function Hero() {
         </div>
       </div>
 
-      {/* Scroll cue */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.4, duration: 1 }}
-        className="absolute bottom-6 left-1/2 z-10 hidden -translate-x-1/2 flex-col items-center gap-2 text-white/70 md:flex"
-      >
-        <span className="text-[10px] uppercase tracking-[0.3em]">Scroll</span>
-        <motion.span
-          animate={{ y: [0, 8, 0] }}
-          transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
-          className="block h-8 w-px bg-white/50"
-        />
-      </motion.div>
     </section>
   );
 }
