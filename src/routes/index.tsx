@@ -384,10 +384,10 @@ function Marquee() {
   ];
   return (
     <section className="border-y border-border/60 bg-sand-soft">
-      <div className="container-ayra flex items-center gap-3 overflow-hidden py-5">
-        <ul className="flex shrink-0 items-center gap-12 whitespace-nowrap text-sm text-foreground/70">
+      <div className="container-ayra py-5">
+        <ul className="flex w-full flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm text-foreground/70 xl:flex-nowrap xl:justify-between">
           {items.map((it) => (
-            <li key={it} className="flex items-center gap-3">
+            <li key={it} className="flex max-w-full items-center gap-3 whitespace-nowrap">
               <Sparkles className="h-3.5 w-3.5 text-primary" strokeWidth={1.5} />
               <span className="tracking-wide">{it}</span>
             </li>
