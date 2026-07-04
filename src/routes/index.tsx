@@ -303,7 +303,7 @@ function Hero() {
           alt="Interior de Ayra Pilates Studio con reformer y luz natural"
           width={1920}
           height={1280}
-          className="h-full w-full object-cover object-[12%_center] sm:object-[8%_center] md:object-left"
+          className="h-full w-full object-cover object-[35%_center] md:object-[8%_center] min-[1440px]:!object-left"
           fetchPriority="high"
         />
       </motion.div>
